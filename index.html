@@ -1,0 +1,366 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake 95</title>
+    <style>
+        @font-face {
+        font-family: 'w95';
+            src: url('W95FA.otf');
+            font-weight: 700;
+            font-style: italic;
+        }
+        .display{
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .button{
+            border: 2px solid rgb(130,130,130);
+            border-top: 2px solid white;
+            border-left: 2px solid white;
+            background-color: rgb(192, 192, 192);
+            box-shadow: 1px 1px 0px rgb(0, 0, 0);
+            cursor: pointer;
+        }
+        .button:active{
+            border: 2px solid white;
+            border-top: 2px solid rgb(0, 0, 0);
+            border-left: 2px solid rgb(0, 0, 0);
+            box-shadow: none;
+            box-shadow: 1px 1px 0px rgb(130,130,130) inset;
+        }
+        .window{
+            border: 2px solid black;
+            border-top: 2px solid white;
+            border-left: 2px solid white;
+            display: flex;
+            flex-direction: column;
+            background-color: lightgrey;
+        }
+        body{
+            background-image: url("clouds.jpg");
+            font-family: "w95";
+        }
+        .header2{
+            background-color: lightgrey;
+            height: 16px;
+            color: rgb(0, 0, 0);
+            padding-top: 3px;
+            padding-left: 5px;
+            display: flex;
+            box-shadow: 0px -1px 0px rgba(0,0,0,0.5) inset;
+            font-size: 13px;
+        }
+        .header{
+            background: linear-gradient(to right, rgb(22, 28, 105) 0%,rgb(187, 220, 255) 100%);
+            height: 25px;
+            color: white;
+            padding-top: 3px;
+            padding-left: 5px;
+            display: flex;
+            box-shadow: 0px -1px 0px rgba(0,0,0,0.5) inset;
+        }
+        *{margin: 0px;padding: 0px;}
+    </style>
+</head>
+<body>
+    <div id="window" class="display">
+        <div class="window">
+            <div class="header"><p>Snake 95 v1.0</p></div>
+            <canvas style="background-image: url('red.png');" width="340px" height="200px" id="ctx"></canvas>
+            <center><p id="txt" style="font-family: 'w95';font-size: 13px;">Snake 95</p></center>
+        </div>
+    </div>
+    <div style="display: none;" id="gameover" style="background-image: url(bg.png);" class="display">
+        <div class="window">
+            <div class="header"><p>Game Over!</p></div>
+            <div style="width: 250px;height: 140px;">
+                <center>
+                    <p style="margin-top: 10px;">Congratulations we lost!</p>
+                    <p style="margin-top: 10px;">You're best level:</p>
+                    <p id="lvl" style="margin-top: 10px;">0</p>
+                    <input style="padding: 2px;font-family: 'w95';margin-top: 20px;" onclick="score=0;level=0;startGame();" type="button" class="button" value=" Restart ">
+                </center>
+            </div>
+        </div>
+    </div>
+    
+    <div style="display: none;" style="background-image: url(bg.png);" id="winlvl" class="display">
+        <div class="window">
+            <div class="header"><p>Snake 95 v1.0</p></div>
+            <div style="width: 250px;height: 120px;">
+                <center>
+                    <p style="margin-top: 10px;">Congratulations you complete<br>the level!</p>
+                    <input style="padding: 2px;font-family: 'w95';margin-top: 20px;" onclick="score=0;level++;startGame();" type="button" class="button" value=" Next level ">
+                </center>
+            </div>
+        </div>
+    </div>
+    <div style="background-image: url(bg.png);" id="win" class="display">
+        <div class="window" id="win">
+            <div class="header"><p>Snake 95 v1.0</p></div>
+            <div style="width: 250px;height: 120px;">
+                <center>
+                    <p style="margin-top: 10px;">Congratulations you complete<br>the level!</p>
+                    <input style="padding: 2px;font-family: 'w95';margin-top: 20px;" onclick="score=0;level=0;startGame();" type="button" class="button" value=" Restart ">
+                </center>
+            </div>
+        </div>
+    </div>
+        <script>
+            var startup = new Audio('startup.mp3');
+            var ding = new Audio('ding.mp3');
+            var chord = new Audio('chord.mp3');
+            var tada = new Audio('tada.mp3');
+
+            var startPoses = [
+                [5,5],
+                [2,1],
+                [1,1],
+                [8,1],
+                [8,5],
+                [0,0],
+            ]
+            var maxScores = [ // per level
+                20,10,6,5,4,999999
+            ]
+            var level = 0;
+            var score = 0;
+            var facing = "D";
+            var nextgen;    
+            window.addEventListener("keydown",board,false);
+            var canvas = document.getElementById("ctx");
+            var ctx = canvas.getContext('2d');
+            pic = new Image();
+            pic.src = "brick.png";
+            pic2 = new Image();
+            pic2.src = "snake.png";
+            pic3 = new Image();
+            pic3.src = "eat.png";
+            var mapW = 10;
+            var mapH = 17;
+            var size = 20;
+            var fruitx;
+            var fruity;
+            var map = [
+            [
+                ["#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#"],
+            ],
+            [
+                ["#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#"," "," "," ","#"," "," "," ","#"," "," "," ","#"," "," "," ","#"],
+                ["#"," "," "," ","#"," "," "," ","#"," "," "," ","#"," "," "," ","#"],
+                ["#"," "," "," ","#"," "," "," ","#"," "," "," ","#"," "," "," ","#"],
+                ["#"," "," "," ","#"," "," "," ","#"," "," "," ","#"," "," "," ","#"],
+                ["#"," "," "," ","#"," "," "," ","#"," "," "," ","#"," "," "," ","#"],
+                ["#"," "," "," ","#"," "," "," ","#"," "," "," ","#"," "," "," ","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#"],
+            ],
+            [
+                ["#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#"," "," "," ","#"," "," "," ","#"," "," "," ","#"," "," "," ","#"],
+                ["#"," "," "," ","#"," "," "," ","#"," "," "," ","#"," "," "," ","#"],
+                ["#"," ","#","#","#"," ","#","#","#","#","#"," ","#","#","#"," ","#"],
+                ["#"," "," "," ","#"," "," "," ","#"," "," "," ","#"," "," "," ","#"],
+                ["#"," "," "," ","#"," "," "," ","#"," "," "," ","#"," "," "," ","#"],
+                ["#"," "," "," "," "," "," "," ","#"," "," "," ","#"," "," "," ","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#"],
+            ],
+            [
+                ["#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#"," ","#"," ","#"," ","#"," ","#"," ","#"," ","#"," ","#"," ","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#"," ","#"," ","#"," ","#"," ","#"," ","#"," ","#"," ","#"," ","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#"," ","#"," ","#"," ","#"," ","#"," ","#"," ","#"," ","#"," ","#"],
+                ["#","#"," ","#"," "," "," ","#"," "," "," ","#"," "," "," ","#","#"],
+                ["#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"],
+                ["#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#"],
+            ],
+            [
+                ["#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#"],
+                ["#"," ","#"," "," "," ","#"," "," "," ","#"," "," "," ","#"," ","#"],
+                ["#"," ","#"," ","#"," ","#"," "," "," ","#"," ","#"," ","#"," ","#"],
+                ["#"," ","#"," ","#"," ","#"," "," "," ","#"," ","#"," ","#"," ","#"],
+                ["#"," ","#"," ","#"," ","#"," "," "," ","#"," ","#"," ","#"," ","#"],
+                ["#"," ","#"," ","#"," ","#"," "," "," ","#"," ","#"," ","#"," ","#"],
+                ["#"," ","#"," ","#"," ","#"," "," "," ","#"," ","#"," ","#"," ","#"],
+                ["#"," "," "," ","#"," ","#"," "," "," ","#"," ","#"," ","#"," ","#"],
+                ["#"," "," "," ","#"," "," "," "," "," "," "," ","#"," "," "," ","#"],
+                ["#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#"],
+            ],
+            [
+                [" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+                [" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+                [" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+                [" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+                [" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+                [" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+                [" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+                [" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+                [" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+                [" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+            ],
+        ];
+            var mapR = [];
+            mapR = map[level];
+            var snake = [];
+            function drawMap(){
+                pic.src = "brick.png";
+                pic.onload = function(){
+                    for(i=0;i<mapH;i++){
+                        for(j=0;j<mapW;j++){
+                            if(map[level][j][i] == "#"){
+                                ctx.drawImage(pic,i*size,j*size,size,size);
+                            }
+                        }
+                    }
+                }
+            }
+            function fruit(){
+                var randx,randy;
+                mapR = map[level];
+                while(true){
+                    randx = Math.floor(Math.random() * map[level][0].length);
+                    randy = Math.floor(Math.random() * map[level].length); 
+                    if(mapR[randy][randx] == " "){
+                        break;
+                    }
+                }
+                ctx.clearRect(fruitx * size,fruity * size,size,size);
+                fruitx = randx;
+                fruity = randy;
+            }
+            function Snake(){
+                if(facing == "S"){
+                    nextgen = [snake[0][0],snake[0][1] + 1];
+                }
+                else if(facing == "A"){
+                    nextgen = [snake[0][0] - 1 ,snake[0][1]];
+                }
+                else if(facing == "W"){
+                    nextgen = [snake[0][0],snake[0][1] - 1];
+                }
+                else if(facing == "D"){
+                    nextgen = [snake[0][0] + 1 ,snake[0][1]];
+                }
+                else{facing = facing;}
+                for(var i=0;i<snake.length;i++){
+                    ctx.clearRect(snake[i][0] * size,snake[i][1] * size,size,size);
+                }
+                snake.pop();
+                snake.unshift(nextgen);
+                pic2.src = "snake.png";
+                pic2.onload = function(){
+                    for(i=0;i<snake.length;i++){
+                            ctx.drawImage(pic2,snake[i][0]*size,snake[i][1]*size,size,size);
+                    }
+                }
+                pic3.src = "eat.png";
+                pic3.onload = function(){
+                    ctx.drawImage(pic3,fruitx*size,fruity*size,size,size);
+                }
+                try{
+                if(mapR[snake[0][1]][snake[0][0]]=="#"){
+                    gameover();
+                }
+                else if(snake[0][0] == fruitx && snake[0][1] == fruity){
+                    fruit();
+                    ding.play();
+                    mapR = map[level];
+                    snake.push(0);
+                    score++;
+                }
+                }
+                catch{}
+            }
+            function board(keyPressed){
+                var key = keyPressed.key.toLowerCase();
+                var dir = snake.facing;
+                if(key == "w") {dir = "W"}
+                else if(key == "a") {dir = "A"}
+                else if(key == "s") {dir = "S"}
+                else if(key == "d") {dir = "D"}
+                else(dir = facing);
+                facing = dir;
+            }
+            function checklvl(){ 
+                if(level >= 5){
+                    win();
+                }
+                if(score >= maxScores[level]){
+                        winLevel();
+                }
+            }
+            function gameover(){
+                document.getElementById("window").style.display = "none";
+                document.getElementById("winlvl").style.display = "none";
+                document.getElementById("win").style.display = "none";
+                document.getElementById("gameover").style.display = "flex";
+                document.getElementById("lvl").innerHTML = level + 1;
+                chord.play();
+            }
+            function winLevel(){
+                document.getElementById("window").style.display = "none";
+                document.getElementById("win").style.display = "none";
+                document.getElementById("winlvl").style.display = "flex";
+                document.getElementById("gameover").style.display = "none";
+                tada.play();
+            }
+            function win(){
+                document.getElementById("window").style.display = "none";
+                document.getElementById("win").style.display = "flex";
+                document.getElementById("winlvl").style.display = "none";
+                document.getElementById("gameover").style.display = "none";
+            }
+            function startGame(){
+                if(level == 4){
+                    facing = "S";
+                }
+                else{
+                    facing = "D";
+                }
+                document.getElementById("window").style.display = "flex";
+                document.getElementById("gameover").style.display = "none";
+                document.getElementById("win").style.display = "none";
+                document.getElementById("winlvl").style.display = "none";
+                ctx.clearRect(0,0,999,999);
+                snake = [
+                    [startPoses[level][0],startPoses[level][1]],
+                    [startPoses[level][0],startPoses[level][1]],
+                    [startPoses[level][0],startPoses[level][1]],
+                ];
+                fruit();
+                drawMap();
+            }
+            function tick(){
+                Snake();
+                checklvl();
+                document.getElementById("txt").innerHTML = "Score :"+score+"/"+maxScores[level] + "    Level: 0" + (level + 1);
+            }
+            setInterval(() => {
+                tick();
+            }, 200);
+            startGame();
+            
+        </script>
+</body>
+</html>
