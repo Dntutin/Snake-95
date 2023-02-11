@@ -263,6 +263,7 @@
                 fruity = randy;
             }
             function Snake(){
+                try{
                 if(facing == "S"){
                     nextgen = [snake[0][0],snake[0][1] + 1];
                 }
@@ -291,7 +292,7 @@
                 pic3.onload = function(){
                     ctx.drawImage(pic3,fruitx*size,fruity*size,size,size);
                 }
-                try{
+                
                 if(mapR[snake[0][1]][snake[0][0]]=="#"){
                     gameover();
                 }
