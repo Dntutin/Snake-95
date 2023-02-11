@@ -70,7 +70,7 @@
 <body>
     <div style="display: none;" id="window" class="display">
         <div class="window">
-            <div class="header"><p>Snake 95 v1.3.1</p></div>
+            <div class="header"><p>Snake 95 v1.3.2</p></div>
             <canvas style="background-image: url('red.png');" width="340px" height="200px" id="ctx"></canvas>
             <center><p id="txt" style="font-family: 'w95';font-size: 13px;">Snake 95</p></center>
         </div>
@@ -91,7 +91,7 @@
     
     <div style="display: none;" style="background-image: url(bg.png);" id="winlvl" class="display">
         <div class="window">
-            <div class="header"><p>Snake 95 v1.3.1</p></div>
+            <div class="header"><p>Snake 95 v1.3.2</p></div>
             <div style="width: 250px;height: 120px;">
                 <center>
                     <p style="margin-top: 10px;">Congratulations you complete<br>the level!</p>
@@ -103,7 +103,7 @@
 
     <div style="background-image: url(bg.png);display: none;" id="win" class="display">
         <div class="window" id="win">
-            <div class="header"><p>Snake 95 v1.3.1</p></div>
+            <div class="header"><p>Snake 95 v1.3.2</p></div>
             <div style="width: 250px;height: 120px;">
                 <center>
                     <p style="margin-top: 10px;">Congratulations you complete<br>the level!</p>
@@ -115,7 +115,7 @@
 
     <div style="background-image: url(bg.png);display: flex;" id="sw" class="display">
         <div class="window" id="sw">
-            <div class="header"><p>Snake 95 v1.3.1</p></div>
+            <div class="header"><p>Snake 95 v1.3.2</p></div>
             <div style="width: 175px;height: 100px;">
                 <center>
                     <p style="margin-top: 10px;">Welcome to Snake 95!</p>
@@ -129,7 +129,7 @@
             var chord = new Audio('chord.mp3');
             var tada = new Audio('tada.mp3');
             var a = true;
-            var ticks = true;
+            var ticks = false;
             var startPoses = [
                 [5,5],
                 [2,1],
@@ -263,7 +263,6 @@
                 fruity = randy;
             }
             function Snake(){
-                try{
                 if(facing == "S"){
                     nextgen = [snake[0][0],snake[0][1] + 1];
                 }
@@ -276,7 +275,7 @@
                 else if(facing == "D"){
                     nextgen = [snake[0][0] + 1 ,snake[0][1]];
                 }
-                else{facing = facing;}
+                else{facing = facing;console.log("W,A,S,D only!")}
                 for(var i=0;i<snake.length;i++){
                     ctx.clearRect(snake[i][0] * size,snake[i][1] * size,size,size);
                 }
@@ -292,7 +291,7 @@
                 pic3.onload = function(){
                     ctx.drawImage(pic3,fruitx*size,fruity*size,size,size);
                 }
-                
+                try{
                 if(mapR[snake[0][1]][snake[0][0]]=="#"){
                     gameover();
                 }
