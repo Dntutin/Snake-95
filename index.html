@@ -91,7 +91,7 @@
     
     <div style="display: none;" style="background-image: url(bg.png);" id="winlvl" class="display">
         <div class="window">
-            <div class="header"><p>Snake 95 v1.3.2</p></div>
+            <div class="header"><p>Snake 95 v1.3.3</p></div>
             <div style="width: 250px;height: 120px;">
                 <center>
                     <p style="margin-top: 10px;">Congratulations you complete<br>the level!</p>
@@ -103,7 +103,7 @@
 
     <div style="background-image: url(bg.png);display: none;" id="win" class="display">
         <div class="window" id="win">
-            <div class="header"><p>Snake 95 v1.3.2</p></div>
+            <div class="header"><p>Snake 95 v1.3.3</p></div>
             <div style="width: 250px;height: 120px;">
                 <center>
                     <p style="margin-top: 10px;">Congratulations you complete<br>the level!</p>
@@ -115,7 +115,7 @@
 
     <div style="background-image: url(bg.png);display: flex;" id="sw" class="display">
         <div class="window" id="sw">
-            <div class="header"><p>Snake 95 v1.3.2</p></div>
+            <div class="header"><p>Snake 95 v1.3.3</p></div>
             <div style="width: 175px;height: 100px;">
                 <center>
                     <p style="margin-top: 10px;">Welcome to Snake 95!</p>
@@ -308,10 +308,10 @@
             function board(keyPressed){
                 var key = keyPressed.key.toLowerCase();
                 var dir = snake.facing;
-                if(key.code == "W" && key.code == "Ц") {dir = "W"}
-                else if(key.code == "A" && key.code == "Ф") {dir = "A"}
-                else if(key.code == "S" && key.code == "Ы") {dir = "S"}
-                else if(key.code == "D" && key.code == "В") {dir = "D"}
+                if(key.code == "W" || key.code == "Ц") {dir = "W"}
+                else if(key.code == "A" || key.code == "Ф") {dir = "A"}
+                else if(key.code == "S" || key.code == "Ы") {dir = "S"}
+                else if(key.code == "D" || key.code == "В") {dir = "D"}
                 else(dir = facing);
                 facing = dir;
                 console.log("Key pressed");
