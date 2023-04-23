@@ -275,7 +275,7 @@
                 else if(facing == "D"){
                     nextgen = [snake[0][0] + 1 ,snake[0][1]];
                 }
-                else{facing = facing;console.log("W,A,S,D only!")}
+                else{facing = facing;console.log("ArrowUP,ArrowDOWN,ArroRIGHT,ArrowLEFT only!")}
                 for(var i=0;i<snake.length;i++){
                     ctx.clearRect(snake[i][0] * size,snake[i][1] * size,size,size);
                 }
@@ -308,10 +308,10 @@
             function board(keyPressed){
                 var key = keyPressed.key.toLowerCase();
                 var dir = snake.facing;
-                if(key.code == "ArrowUp") {dir = "W"}
-                else if(key.code == "ArrowLeft") {dir = "A"}
-                else if(key.code == "ArrowDown") {dir = "S"}
-                else if(key.code == "ArrowRight") {dir = "D"}
+                if(key.code == "arrowup") {dir = "W"}
+                else if(key.code == "arrowleft") {dir = "A"}
+                else if(key.code == "arrowdown") {dir = "S"}
+                else if(key.code == "arrowright") {dir = "D"}
                 else(dir = facing);
                 facing = dir;
                 console.log("Key pressed");
