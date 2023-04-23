@@ -308,10 +308,10 @@
             function board(keyPressed){
                 var key = keyPressed.key.toLowerCase();
                 var dir = snake.facing;
-                if(key.code == "arrowup") {dir = "W"}
-                else if(key.code == "arrowleft") {dir = "A"}
-                else if(key.code == "arrowdown") {dir = "S"}
-                else if(key.code == "arrowright") {dir = "D"}
+                if(key.code == "W" && key.code == "Ц") {dir = "W"}
+                else if(key.code == "A" && key.code == "Ф") {dir = "A"}
+                else if(key.code == "S" && key.code == "Ы") {dir = "S"}
+                else if(key.code == "D" && key.code == "В") {dir = "D"}
                 else(dir = facing);
                 facing = dir;
                 console.log("Key pressed");
