@@ -306,12 +306,12 @@
                 catch{}
             }
             function board(keyPressed){
-                var key = keyPressed.key.toLowerCase();
+                var key1 = keyPressed.key.toLowerCase();
                 var dir = snake.facing;
-                if(key.code == ArrowUp) {dir = "W"}
-                else if(key.code == ArrowLeft) {dir = "A"}
-                else if(key.code == ArrowDown) {dir = "S"}
-                else if(key.code == ArrowRight) {dir = "D"}
+                if(key1.code == "ArrowUp") {dir = "W"}
+                else if(key1.code == "ArrowLeft") {dir = "A"}
+                else if(key1.code == "ArrowDown") {dir = "S"}
+                else if(key1.code == "ArrowRight") {dir = "D"}
                 else(dir = facing);
                 facing = dir;
                 console.log("Key pressed");
